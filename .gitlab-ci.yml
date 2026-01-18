@@ -1,0 +1,27 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  IMAGE_TAG: $CI_COMMIT_SHORT_SHA
+  IMAGE: $HARBOR_REGISTRY/$HARBOR_PROJECT/$IMAGE_NAME:$IMAGE_TAG
+
+build-image:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - |
+      cat > /kaniko/.docker/config.json <<EOF
+      {
+        "auths": {
+          "$HARBOR_REGISTRY": {
+            "username": "$HARBOR_USERNAME",
+            "password": "$HARBOR_PASSWORD"
+          }
+        }
+      }
+      EOF
+    - /kaniko/executor --context "$CI_PROJECT_DIR" --dockerfile Dockerfile --destination "$IMAGE" --insecure --skip-tls-verify

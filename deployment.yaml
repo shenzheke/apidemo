@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apidemo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apidemo
+  template:
+    metadata:
+      labels:
+        app: apidemo
+    spec:
+      containers:
+        - name: apidemo
+          image: 10.0.0.41/library/apidemo:latest
+          ports:
+            - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: apidemo
+spec:
+  selector:
+    app: apidemo
+  ports:
+    - port: 80
+      targetPort: 5000
+
