@@ -9,12 +9,12 @@
 
 ## 前置条件
 
-- K8s 集群能访问 Internet、Harbor (10.0.0.41)、GitLab (10.0.0.200)
-- 集群已部署 **Argo CD**
-- 集群已部署 **gitlab-runner**（可选，用于 CI 构建镜像）
-- 操作主机已安装 git，并能访问 GitLab 和 Harbor
+- K8s（1.29.8） 集群能访问 Internet、Harbor (10.0.0.41)v2.8.6、GitLab (10.0.0.200)18.2
+- 集群已部署 **Argo CD 3.2.4**
+- 集群已部署 **gitlab-runner v18.7.2**（用于 CI 构建镜像），并与gitlab联动
+- 操作主机已安装 git 2.34.1，并能访问 GitLab 和 Harbor
 - Harbor 已创建 robot 账号（示例：robot$apidemotest）
-
+- 注意区分仓库默认分支master OR main
 ## 步骤一：K8s 集群内准备（手动执行一次）
 
 1. 创建命名空间
@@ -41,7 +41,7 @@
      project: default
      source:
        repoURL: http://10.0.0.200/apidemo/apidemo.git
-       targetRevision: main
+       targetRevision: master
        path: deploy/k8s
      destination:
        server: https://kubernetes.default.svc
@@ -92,4 +92,5 @@
 - 使用 ApplicationSet + 目录结构多环境管理
 - 引入 Image Updater 自动更新镜像 tag
 - 添加健康检查、回滚策略、通知（Wecom/Dingtalk）
+
 
