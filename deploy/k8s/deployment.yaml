@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: apidemo
+  labels:
+    app: apidemo
 spec:
   replicas: 1
   selector:
@@ -12,9 +14,11 @@ spec:
       labels:
         app: apidemo
     spec:
+      imagePullSecrets:
+        - name: harbor-secret
       containers:
         - name: apidemo
-          image: 10.0.0.41/library/apidemo:latest
+          image: 10.0.0.41/apidemo/apidemo
           ports:
             - containerPort: 5000
 ---

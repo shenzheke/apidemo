@@ -1,0 +1,7 @@
+resources:
+  - deployment.yaml
+
+images:
+  - name: 10.0.0.41/apidemo/apidemo
+    newTag: 649227d0
+

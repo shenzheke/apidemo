@@ -3,8 +3,9 @@ stages:
   - deploy
 
 variables:
+  IMAGE_NAME: "apidemo"
   IMAGE_TAG: $CI_COMMIT_SHORT_SHA
-  IMAGE: $HARBOR_REGISTRY/$HARBOR_PROJECT/$IMAGE_NAME:$IMAGE_TAG
+  KUSTOMIZE_IMAGE_NAME: "$HARBOR_REGISTRY/$HARBOR_PROJECT/$IMAGE_NAME"
 
 build-image:
   stage: build
@@ -24,4 +25,25 @@ build-image:
         }
       }
       EOF
-    - /kaniko/executor --context "$CI_PROJECT_DIR" --dockerfile Dockerfile --destination "$IMAGE" --insecure --skip-tls-verify
+    - /kaniko/executor --context "$CI_PROJECT_DIR" --dockerfile Dockerfile --destination "$KUSTOMIZE_IMAGE_NAME:$IMAGE_TAG" --insecure --skip-tls-verify
+  only:
+     - master
+  except:
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /\[skip ci\]/
+
+update-k8s-manifest:
+  stage: deploy
+  image: alpine/git
+  script:
+    - |
+      PUSH_URL="http://oauth2:${GITLAB_PUSH_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
+      git config --global user.email "szk@hotmail.com"
+      git config --global user.name "gitlab-ci-law"
+      git checkout  master
+      sed -i "s/newTag:.*/newTag: $CI_COMMIT_SHORT_SHA/" deploy/k8s/kustomization.yaml
+      git add deploy/k8s/kustomization.yaml
+      git commit -m "ci: update image tag $CI_COMMIT_SHORT_SHA[skip ci]"
+      git push $PUSH_URL HEAD:master
+  only:
+    - master
