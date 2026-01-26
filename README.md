@@ -56,14 +56,7 @@
    kubectl apply -f apidemo-app.yaml
 
 
-## 步骤二：Argo CD 添加私有 GitLab 仓库权限（只需执行一次）
- Argo CD 需要有权限拉取你的 GitLab 仓库。
-```bash
-   argocd repo add http://10.0.0.200/apidemo/apidemo.git \
-     --username lawtest \
-     --password glpat-u-xxxxxxxxxxxxxxxxxxxxxxxxxx
- ```
-## 步骤三：GitLab 项目配置（CI/CD + Token）
+## 步骤二：GitLab 项目配置（CI/CD + Token）
 ![GitLab Access Token 创建页面](https://github.com/user-attachments/assets/b7c68c64-15f8-4bb8-bcf6-205ef4328188)
 ![GitLab Access Token 创建页面](https://github.com/user-attachments/assets/9913bea8-0cd6-4b44-9cea-16ae712adf49)
 *图：创建 Project Access Token（建议命名为 GITLAB_PUSH_TOKEN）*
@@ -77,6 +70,13 @@
    - HARBOR_REGISTRY=10.0.0.41
    - IMAGE_NAME=apidemo
 
+## 步骤三：Argo CD 添加私有 GitLab 仓库权限（只需执行一次）
+ Argo CD 需要有权限拉取你的 GitLab 仓库。
+```bash
+   argocd repo add http://10.0.0.200/apidemo/apidemo.git \
+     --username lawtest \
+     --password glpat-u-xxxxxxxxxxxxxxxxxxxxxxxxxx
+ ```
 
 ## 验证完整闭环
 
@@ -92,5 +92,6 @@
 - 使用 ApplicationSet + 目录结构多环境管理
 - 引入 Image Updater 自动更新镜像 tag
 - 添加健康检查、回滚策略、通知（Wecom/Dingtalk）
+
 
 
